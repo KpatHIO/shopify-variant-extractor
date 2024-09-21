@@ -47,4 +47,48 @@
   </table>
 
   <script>
-    async function
+    async function scrapeVariants() {
+      const productUrl = document.getElementById('productUrl').value;
+      const tableBody = document.querySelector('#variantTable tbody');
+      tableBody.innerHTML = ''; // Clear previous data
+
+      try {
+        // Fetch the HTML content of the product page
+        const response = await fetch(productUrl);
+        const html = await response.text();
+
+        // Create a temporary DOM element to parse the HTML
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        // Find the variant dropdown (adjust the selector if necessary)
+        const variantDropdown = doc.querySelector('select[name="id"]');
+        if (!variantDropdown) {
+          alert('No variants found on this page.');
+          return;
+        }
+
+        // Extract variant options
+        const options = variantDropdown.querySelectorAll('option');
+        options.forEach(option => {
+          const variantId = option.value;
+          const variantName = option.textContent.trim();
+          const variantUrl = `${productUrl}?variant=${variantId}`;
+          
+          // Add the variant data to the table
+          const variantRow = `
+            <tr>
+              <td>${variantName}</td>
+              <td><a href="${variantUrl}" target="_blank">${variantUrl}</a></td>
+            </tr>
+          `;
+          tableBody.insertAdjacentHTML('beforeend', variantRow);
+        });
+      } catch (error) {
+        console.error('Error fetching the product page:', error);
+        alert('Failed to scrape the product page. Check the URL and try again.');
+      }
+    }
+  </script>
+</body>
+</html>
