@@ -79,16 +79,16 @@
           const variantId = option.value;  // Extract variant ID (e.g., "46279069466783")
           const variantUrl = `${productUrl}?variant=${variantId}`;  // Create URL using the variant ID
           
-          // Fetch rvalue (Insulation Required in m²) from the input field associated with each variant
-          const rvalueInput = doc.querySelector('input#qty-calc-input');
-          const insulationRequired = rvalueInput ? rvalueInput.getAttribute('rvalue') : 'N/A';  // If no rvalue, return 'N/A'
+          // Fetch the total area (Insulation Required in m²) from the <p> element with id="qty-calc-area"
+          const totalAreaElement = doc.querySelector('#qty-calc-area');
+          const insulationRequired = totalAreaElement ? totalAreaElement.textContent.trim() : 'N/A';  // If no value, return 'N/A'
           
           // Add the variant data to the table
           const variantRow = `
             <tr>
               <td>${variantName}</td>
               <td><a href="${variantUrl}" target="_blank">${variantUrl}</a></td>
-              <td>${insulationRequired} m²</td>
+              <td>${insulationRequired}</td>
             </tr>
           `;
           tableBody.insertAdjacentHTML('beforeend', variantRow);
