@@ -39,7 +39,7 @@
   <table id="variantTable">
     <thead>
       <tr>
-        <th>Variant Name</th>
+        <th>Variant Combination</th>
         <th>Variant URL</th>
       </tr>
     </thead>
@@ -61,29 +61,39 @@
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
 
-        // Find the variant dropdown (adjust the selector if necessary)
-        const variantDropdown = doc.querySelector('select[name="id"]');
-        if (!variantDropdown) {
-          alert('No variants found on this page.');
+        // Find the first dropdown (e.g., color)
+        const firstDropdown = doc.querySelector('select.form-control:first-of-type');
+        // Find the second dropdown (e.g., size)
+        const secondDropdown = doc.querySelector('select.form-control:nth-of-type(2)');
+
+        if (!firstDropdown || !secondDropdown) {
+          alert('Could not find both dropdowns on the page.');
           return;
         }
 
-        // Extract variant options
-        const options = variantDropdown.querySelectorAll('option');
-        options.forEach(option => {
-          const variantId = option.value;
-          const variantName = option.textContent.trim();
-          const variantUrl = `${productUrl}?variant=${variantId}`;
-          
-          // Add the variant data to the table
-          const variantRow = `
-            <tr>
-              <td>${variantName}</td>
-              <td><a href="${variantUrl}" target="_blank">${variantUrl}</a></td>
-            </tr>
-          `;
-          tableBody.insertAdjacentHTML('beforeend', variantRow);
+        // Extract the options from the first dropdown
+        const firstOptions = Array.from(firstDropdown.querySelectorAll('option')).map(option => option.textContent.trim());
+        // Extract the options from the second dropdown
+        const secondOptions = Array.from(secondDropdown.querySelectorAll('option')).map(option => option.textContent.trim());
+
+        // Generate all combinations of first and second dropdown options
+        firstOptions.forEach(firstOption => {
+          secondOptions.forEach(secondOption => {
+            const variantCombination = `${firstOption} + ${secondOption}`;
+            // Create a placeholder variant URL (replace with real logic if needed)
+            const variantUrl = `${productUrl}?variant=${firstOption.replace(/\s+/g, '-').toLowerCase()}-${secondOption.replace(/\s+/g, '-').toLowerCase()}`;
+            
+            // Add the variant data to the table
+            const variantRow = `
+              <tr>
+                <td>${variantCombination}</td>
+                <td><a href="${variantUrl}" target="_blank">${variantUrl}</a></td>
+              </tr>
+            `;
+            tableBody.insertAdjacentHTML('beforeend', variantRow);
+          });
         });
+
       } catch (error) {
         console.error('Error fetching the product page:', error);
         alert('Failed to scrape the product page. Check the URL and try again.');
