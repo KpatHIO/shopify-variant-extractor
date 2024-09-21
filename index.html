@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shopify Variant URL Extractor</title>
+  <title>Shopify Variant Scraper</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -28,24 +28,17 @@
   </style>
 </head>
 <body>
-  <h2>Shopify Variant URL Extractor</h2>
+  <h2>Shopify Variant Scraper</h2>
   
-  <label for="shopUrl">Enter Shopify Store URL (e.g., your-store.myshopify.com):</label>
-  <input type="text" id="shopUrl" placeholder="Enter your Shopify store URL" required>
+  <label for="productUrl">Enter Shopify Product URL:</label>
+  <input type="text" id="productUrl" placeholder="Enter product URL" required>
   
-  <label for="apiKey">API Key:</label>
-  <input type="text" id="apiKey" placeholder="Enter Shopify API Key" required>
-
-  <label for="password">API Password:</label>
-  <input type="password" id="password" placeholder="Enter Shopify API Password" required>
-
-  <button onclick="extractVariants()">Extract Variants</button>
+  <button onclick="scrapeVariants()">Extract Variants</button>
 
   <h3>Extracted Variant URLs:</h3>
   <table id="variantTable">
     <thead>
       <tr>
-        <th>Product Name</th>
         <th>Variant Name</th>
         <th>Variant URL</th>
       </tr>
@@ -54,41 +47,4 @@
   </table>
 
   <script>
-    async function extractVariants() {
-      const shopUrl = document.getElementById('shopUrl').value;
-      const apiKey = document.getElementById('apiKey').value;
-      const password = document.getElementById('password').value;
-      
-      const tableBody = document.querySelector('#variantTable tbody');
-      tableBody.innerHTML = ''; // Clear previous data
-
-      // Shopify API URL
-      const apiUrl = `https://${apiKey}:${password}@${shopUrl}/admin/api/2023-01/products.json`;
-
-      try {
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-
-        // Loop through products and extract variants
-        data.products.forEach(product => {
-          const productHandle = product.handle;
-
-          product.variants.forEach(variant => {
-            const variantUrl = `https://${shopUrl}/products/${productHandle}?variant=${variant.id}`;
-            const variantRow = `
-              <tr>
-                <td>${product.title}</td>
-                <td>${variant.title}</td>
-                <td><a href="${variantUrl}" target="_blank">${variantUrl}</a></td>
-              </tr>
-            `;
-            tableBody.insertAdjacentHTML('beforeend', variantRow);
-          });
-        });
-      } catch (error) {
-        console.error('Error fetching product data:', error);
-      }
-    }
-  </script>
-</body>
-</html>
+    async function
