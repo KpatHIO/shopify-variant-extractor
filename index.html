@@ -39,7 +39,7 @@
   <table id="variantTable">
     <thead>
       <tr>
-        <th>Variant Combination</th>
+        <th>Variant Name</th>
         <th>Variant URL</th>
       </tr>
     </thead>
@@ -61,37 +61,31 @@
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
 
-        // Find the first dropdown (e.g., color)
-        const firstDropdown = doc.querySelector('select.form-control:first-of-type');
-        // Find the second dropdown (e.g., size)
-        const secondDropdown = doc.querySelector('select.form-control:nth-of-type(2)');
-
-        if (!firstDropdown || !secondDropdown) {
-          alert('Could not find both dropdowns on the page.');
+        // Find the select dropdown with the class "form-control tt-obj-dark"
+        const variantDropdown = doc.querySelector('select.form-control.tt-obj-dark');
+        
+        if (!variantDropdown) {
+          alert('Could not find the variant dropdown on the page.');
           return;
         }
 
-        // Extract the options from the first dropdown
-        const firstOptions = Array.from(firstDropdown.querySelectorAll('option')).map(option => option.textContent.trim());
-        // Extract the options from the second dropdown
-        const secondOptions = Array.from(secondDropdown.querySelectorAll('option')).map(option => option.textContent.trim());
+        // Extract the options from the dropdown
+        const options = Array.from(variantDropdown.querySelectorAll('option'));
 
-        // Generate all combinations of first and second dropdown options
-        firstOptions.forEach(firstOption => {
-          secondOptions.forEach(secondOption => {
-            const variantCombination = `${firstOption} + ${secondOption}`;
-            // Create a placeholder variant URL (replace with real logic if needed)
-           const variantUrl = `${productUrl}?variant=${variantId}`;
-            
-            // Add the variant data to the table
-            const variantRow = `
-              <tr>
-                <td>${variantCombination}</td>
-                <td><a href="${variantUrl}" target="_blank">${variantUrl}</a></td>
-              </tr>
-            `;
-            tableBody.insertAdjacentHTML('beforeend', variantRow);
-          });
+        // Loop through the options and generate URLs based on variant IDs
+        options.forEach(option => {
+          const variantName = option.textContent.trim();  // Extract variant name (e.g., "Canberra / 25mm")
+          const variantId = option.value;  // Extract variant ID (e.g., "46279069466783")
+          const variantUrl = `${productUrl}?variant=${variantId}`;  // Create URL using the variant ID
+          
+          // Add the variant data to the table
+          const variantRow = `
+            <tr>
+              <td>${variantName}</td>
+              <td><a href="${variantUrl}" target="_blank">${variantUrl}</a></td>
+            </tr>
+          `;
+          tableBody.insertAdjacentHTML('beforeend', variantRow);
         });
 
       } catch (error) {
